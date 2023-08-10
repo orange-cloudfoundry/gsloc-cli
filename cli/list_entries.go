@@ -32,6 +32,10 @@ func (c *ListEntries) Execute([]string) error {
 		return err
 	}
 
+	if c.Json {
+		return PrintProtoListJson[*gslbsvc.GetEntryResponse](entsResp.Entries)
+	}
+
 	if len(entsResp.Entries) == 0 {
 		msg.Info("No entries found.")
 		return nil
