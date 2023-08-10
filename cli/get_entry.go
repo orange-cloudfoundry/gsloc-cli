@@ -31,10 +31,10 @@ func (c *GetEntry) Execute([]string) error {
 		return err
 	}
 	if c.Json {
-		return PrintProtoJson[*gslbsvc.GetEntryResponse](entResp)
+		return PrintProtoJson(entResp)
 	}
 
-	return PrintProtoHuman[*gslbsvc.GetEntryResponse](entResp)
+	return PrintProtoHuman(entResp)
 }
 
 func init() {

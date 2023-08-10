@@ -28,7 +28,7 @@ func (c *ListDcs) Execute([]string) error {
 	}
 
 	if c.Json {
-		return PrintProtoJson[*gslbsvc.ListDcsResponse](dcsResp)
+		return PrintProtoJson(dcsResp)
 	}
 
 	if len(dcsResp.GetDcs()) == 0 {
