@@ -43,7 +43,7 @@ checksum:
   algorithm: sha256
 
 
-  release:
+release:
   github:
     owner: orange-cloudfoundry
     name: gsloc-cli
