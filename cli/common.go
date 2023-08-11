@@ -294,42 +294,6 @@ func MakeTableWriter(headers []string, writers ...io.Writer) *tablewriter.Table 
 	return table
 }
 
-//func TypeFromShort(short string) string {
-//	return enumType[strings.ToLower(short)]
-//}
-
-func ProtoSkeletonToFile(msg proto.Message, filename string) error {
-	b, err := protojson.MarshalOptions{
-		Multiline:       true,
-		Indent:          "  ",
-		AllowPartial:    false,
-		UseProtoNames:   true,
-		UseEnumNumbers:  false,
-		EmitUnpopulated: true,
-		Resolver:        nil,
-	}.Marshal(msg)
-	if err != nil {
-		return err
-	}
-
-	ext := strings.ToLower(filepath.Ext(filename))
-	if ext == ".yml" || ext == ".yaml" {
-		b, err = kyaml.JSONToYAML(b)
-		if err != nil {
-			return fmt.Errorf("failed to convert json to yaml: %w", err)
-		}
-	}
-
-	return os.WriteFile(filename, b, 0644)
-}
-
-func boolFmtTable(bl bool) string {
-	if bl {
-		return msg.Cyan("Yes").String()
-	}
-	return msg.Yellow("No").String()
-}
-
 func DiffAndConfirm(from, dest proto.Message, force bool) (bool, error) {
 	msg.Info("Change to be made:")
 	msg.Printf("━━━━━\n")
