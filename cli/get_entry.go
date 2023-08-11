@@ -7,8 +7,8 @@ import (
 )
 
 type GetEntry struct {
-	FQDN string `short:"n" long:"fqdn" description:"FQDN of the entry" required:"true"`
-	Json bool   `short:"j" long:"json" description:"Format in json instead of human table readable."`
+	FQDN *FQDN `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
+	Json bool  `short:"j" long:"json" description:"Format in json instead of human table readable."`
 
 	client gslbsvc.GSLBClient
 }
@@ -25,7 +25,7 @@ func (c *GetEntry) Execute([]string) error {
 	msg.Printf("━━━━━\n")
 	msg.UseStdout()
 	entResp, err := c.client.GetEntry(context.Background(), &gslbsvc.GetEntryRequest{
-		Fqdn: c.FQDN,
+		Fqdn: c.FQDN.String(),
 	})
 	if err != nil {
 		return err

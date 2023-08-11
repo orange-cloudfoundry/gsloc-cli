@@ -6,25 +6,25 @@ import (
 	gslbsvc "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/services/gslb/v1"
 )
 
-type GetEntryStatus struct {
+type GetHealthcheck struct {
 	FQDN *FQDN `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
 	Json bool  `short:"j" long:"json" description:"Format in json instead of human table readable."`
 
 	client gslbsvc.GSLBClient
 }
 
-func (c *GetEntryStatus) SetClient(client gslbsvc.GSLBClient) {
+func (c *GetHealthcheck) SetClient(client gslbsvc.GSLBClient) {
 	c.client = client
 }
 
-var getEntryStatus GetEntryStatus
+var getHealthcheck GetHealthcheck
 
-func (c *GetEntryStatus) Execute([]string) error {
+func (c *GetHealthcheck) Execute([]string) error {
 	msg.UseStderr()
-	msg.Infof("Entry %s configuration", msg.Cyan(c.FQDN))
+	msg.Infof("Healthcheck %s configuration", msg.Cyan(c.FQDN))
 	msg.Printf("━━━━━\n")
 	msg.UseStdout()
-	entResp, err := c.client.GetEntryStatus(context.Background(), &gslbsvc.GetEntryStatusRequest{
+	entResp, err := c.client.GetHealthCheck(context.Background(), &gslbsvc.GetHealthCheckRequest{
 		Fqdn: c.FQDN.String(),
 	})
 	if err != nil {
@@ -38,14 +38,14 @@ func (c *GetEntryStatus) Execute([]string) error {
 }
 
 func init() {
-	desc := "Get entry with status."
+	desc := "Get healthcheck."
 	cmd, err := parser.AddCommand(
-		"get-entry-status",
+		"get-healthcheck",
 		desc,
 		desc,
-		&getEntryStatus)
+		&getHealthcheck)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"ges", "entry"}
+	cmd.Aliases = []string{"gh", "ghc", "get-hc"}
 }

@@ -6,6 +6,7 @@ import (
 	msg "github.com/ArthurHlt/messages"
 	gslbsvc "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/services/gslb/v1"
 	"github.com/sourcegraph/conc/pool"
+	"strings"
 )
 
 type ListEntriesStatus struct {
@@ -93,14 +94,19 @@ func (c *ListEntriesStatus) makeDcContent(entMemberStatus []*gslbsvc.MemberStatu
 		}
 		if entMemberStatus.GetStatus() == gslbsvc.MemberStatus_ONLINE {
 			dcContent += msg.Green(entMemberStatus.GetIp()).String() + " (Online)\n"
+			continue
 		}
 		if entMemberStatus.GetStatus() == gslbsvc.MemberStatus_OFFLINE {
 			dcContent += msg.Red(entMemberStatus.GetIp()).String() + " (Offline)\n"
+			continue
 		}
-		if entMemberStatus.GetStatus() == gslbsvc.MemberStatus_CHECK_FAILED {
-			dcContent += msg.Red(entMemberStatus.GetIp()).String() +
-				fmt.Sprintf(" (Check failed: %s)\n", entMemberStatus.GetFailureReason())
+		reason := entMemberStatus.GetFailureReason()
+		if entMemberStatus.GetStatus() == gslbsvc.MemberStatus_CHECK_FAILED && strings.Contains(reason, "disabled entry") {
+			dcContent += msg.Yellow(entMemberStatus.GetIp()).String() + " (Disabled by User)\n"
+			continue
 		}
+		dcContent += msg.Red(entMemberStatus.GetIp()).String() +
+			fmt.Sprintf(" (Check failed: %s)\n", entMemberStatus.GetFailureReason())
 	}
 	return dcContent
 }

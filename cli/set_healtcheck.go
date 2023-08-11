@@ -3,10 +3,8 @@ package cli
 import (
 	"context"
 	"fmt"
-	"github.com/ArthurHlt/go-flags"
 	msg "github.com/ArthurHlt/messages"
 	"github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/api/config/core/v1"
-	"github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/api/config/entries/v1"
 	hcconf "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/api/config/healthchecks/v1"
 	gslbsvc "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/services/gslb/v1"
 	gsloctype "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/type/v1"
@@ -17,19 +15,8 @@ import (
 	"time"
 )
 
-type SetEntry struct {
-	File flags.Filename `short:"f" long:"file" description:"Path to a json or yml file definition of entry" required:"true" default:"entry.yml"`
-
-	FQDN              *FQDN               `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
-	LBAlgoPreferred   string              `short:"p" long:"lb-algo-preferred" description:"LB algo preferred" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
-	LBAlgoAlternate   string              `short:"a" long:"lb-algo-alternate" description:"LB algo alternate" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
-	LBAlgoFallback    string              `short:"b" long:"lb-algo-fallback" description:"LB algo fallback" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
-	MaxAnswerReturned uint32              `short:"m" long:"max-answer-returned" description:"Max answer returned" default:"0"`
-	MembersIPv4       []map[string]string `short:"4" long:"members-ipv4" description:"Members ipv4 (can be set multiple time)"`
-	MembersIPv6       []map[string]string `short:"6" long:"members-ipv6" description:"Members ipv6 (can be set multiple time)"`
-	TTL               uint32              `long:"ttl" description:"TTL" default:"30"`
-	Tags              []string            `short:"T" long:"tag" description:"Tag (can be set multiple time)"`
-
+type SetHealthcheck struct {
+	FQDN        *FQDN  `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
 	HcTimeout   string `short:"o" long:"hc-timeout" description:"Healthcheck timeout" default:"10s"`
 	HcInterval  string `short:"i" long:"hc-interval" description:"Healthcheck interval" default:"30s"`
 	HcPort      uint32 `short:"P" long:"hc-port" description:"Healthcheck port" default:"80"`
@@ -57,90 +44,52 @@ type SetEntry struct {
 	client gslbsvc.GSLBClient
 }
 
-var setEntry SetEntry
+var setHealthcheck SetHealthcheck
 
-func (c *SetEntry) SetClient(client gslbsvc.GSLBClient) {
+func (c *SetHealthcheck) SetClient(client gslbsvc.GSLBClient) {
 	c.client = client
 }
 
-func (c *SetEntry) Execute([]string) error {
-	entryToSet, loaded, err := FileToProto[*gslbsvc.SetEntryRequest](string(c.File))
+func (c *SetHealthcheck) Execute([]string) error {
+	hc, err := c.makeHealthcheck()
 	if err != nil {
 		return err
 	}
-	entryToSet.Entry.Fqdn = c.FQDN.String()
-	var previousEntry *gslbsvc.SetEntryRequest
-	resp, err := c.client.GetEntry(context.Background(), &gslbsvc.GetEntryRequest{
-		Fqdn: entryToSet.GetEntry().GetFqdn(),
+	setHcReq := &gslbsvc.SetHealthCheckRequest{
+		Fqdn:        c.FQDN.String(),
+		Healthcheck: hc,
+	}
+
+	var previousEntry *gslbsvc.SetHealthCheckRequest
+	resp, err := c.client.GetHealthCheck(context.Background(), &gslbsvc.GetHealthCheckRequest{
+		Fqdn: c.FQDN.String(),
 	})
 	if err != nil && !strings.Contains(err.Error(), "not found") {
 		return err
 	}
 	if err == nil {
-		previousEntry = &gslbsvc.SetEntryRequest{
-			Entry:       resp.GetEntry(),
-			Healthcheck: resp.GetHealthcheck(),
+		previousEntry = &gslbsvc.SetHealthCheckRequest{
+			Fqdn:        c.FQDN.String(),
+			Healthcheck: resp.Healthcheck,
 		}
-		proto.Merge(entryToSet, previousEntry)
+		proto.Merge(setHcReq, previousEntry)
 	}
-	if loaded {
-		return c.apply(previousEntry, entryToSet)
-	}
-	entryToSet, err = c.makeEntry()
-	if err != nil {
-		return err
-	}
-	return c.apply(previousEntry, entryToSet)
-}
-
-func (c *SetEntry) apply(previousEntry, currentEntry *gslbsvc.SetEntryRequest) error {
-	confirm, err := DiffAndConfirm(previousEntry, currentEntry, c.Force)
+	confirm, err := DiffAndConfirm(previousEntry, setHcReq, c.Force)
 	if err != nil {
 		return err
 	}
 	if !confirm {
 		return nil
 	}
-	_, err = c.client.SetEntry(context.Background(), currentEntry)
+	_, err = c.client.SetHealthCheck(context.Background(), setHcReq)
 	if err != nil {
 		return err
 	}
-	msg.Successf("Entry %s set successfully.", msg.Cyan(c.FQDN))
+	msg.Successf("Healthcheck for %s set successfully.", msg.Cyan(c.FQDN))
 	return nil
 }
 
-func (c *SetEntry) makeEntry() (*gslbsvc.SetEntryRequest, error) {
-	membersIpv4, err := ListMapToMembers(c.MembersIPv4)
-	if err != nil {
-		return nil, fmt.Errorf("invalid members ipv4: %s", err)
-	}
-	membersIpv6, err := ListMapToMembers(c.MembersIPv6)
-	if err != nil {
-		return nil, fmt.Errorf("invalid members ipv6: %s", err)
-	}
-	hc, err := c.makeHealthcheck()
-	if err != nil {
-		return nil, err
-	}
-	req := &gslbsvc.SetEntryRequest{
-		Entry: &entries.Entry{
-			Fqdn:              c.FQDN.String(),
-			LbAlgoPreferred:   entries.LBAlgo(entries.LBAlgo_value[c.LBAlgoPreferred]),
-			LbAlgoAlternate:   entries.LBAlgo(entries.LBAlgo_value[c.LBAlgoAlternate]),
-			LbAlgoFallback:    entries.LBAlgo(entries.LBAlgo_value[c.LBAlgoFallback]),
-			MaxAnswerReturned: c.MaxAnswerReturned,
-			MembersIpv4:       membersIpv4,
-			MembersIpv6:       membersIpv6,
-			Ttl:               c.TTL,
-			Permissions:       nil,
-			Tags:              c.Tags,
-		},
-		Healthcheck: hc,
-	}
-	return req, nil
-}
-
-func (c *SetEntry) makeHealthcheck() (*hcconf.HealthCheck, error) {
+func (c *SetHealthcheck) makeHealthcheck() (*hcconf.HealthCheck, error) {
 	timeout, err := time.ParseDuration(c.HcTimeout)
 	if err != nil {
 		return nil, fmt.Errorf("invalid timeout: %s", err)
@@ -237,7 +186,7 @@ func init() {
 		"set-entry",
 		desc,
 		desc,
-		&setEntry)
+		&setHealthcheck)
 	if err != nil {
 		panic(err)
 	}

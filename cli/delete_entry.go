@@ -7,7 +7,7 @@ import (
 )
 
 type DeleteEntry struct {
-	FQDN string `short:"n" long:"fqdn" description:"FQDN of the entry" required:"true"`
+	FQDN *FQDN `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
 
 	client gslbsvc.GSLBClient
 }
@@ -20,7 +20,7 @@ var deleteEntry DeleteEntry
 
 func (c *DeleteEntry) Execute([]string) error {
 	_, err := c.client.DeleteEntry(context.Background(), &gslbsvc.DeleteEntryRequest{
-		Fqdn: c.FQDN,
+		Fqdn: c.FQDN.String(),
 	})
 	if err != nil {
 		return err
