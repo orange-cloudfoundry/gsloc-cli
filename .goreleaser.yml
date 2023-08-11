@@ -1,0 +1,52 @@
+project_name: gsloc-cli
+
+gitlab_urls:
+  api: https://gitlab.si.francetelecom.fr/api/v4/
+  download: https://gitlab.si.francetelecom.fr
+  skip_tls_verify: false
+
+builds:
+  - &template
+    id: binary
+    main: ./
+    binary: gslocli
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s
+      - -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: archives
+    builds:
+      - binary
+    format: "tar.gz"
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    wrap_in_directory: true
+    files:
+      - LICENSE*
+      - README*
+      - CHANGELOG*
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+
+  release:
+  github:
+    owner: orange-cloudfoundry
+    name: gsloc-cli
+  prerelease: auto
+  name_template: '{{.Tag}}'
+
