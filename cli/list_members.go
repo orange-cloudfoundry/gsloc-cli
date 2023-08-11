@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	msg "github.com/ArthurHlt/messages"
+	"github.com/olekukonko/tablewriter"
+	"github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/api/config/entries/v1"
 	gslbsvc "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/services/gslb/v1"
 )
 
@@ -36,7 +38,14 @@ func (c *ListMembers) Execute([]string) error {
 	}
 	table := MakeTableWriter([]string{"DC", "IP", "Ratio", "State"})
 	table.SetAutoWrapText(false)
-	for _, member := range entResp.GetMembersIpv6() {
+	c.addToTable(table, entResp.GetMembersIpv4())
+	c.addToTable(table, entResp.GetMembersIpv6())
+	table.Render()
+	return nil
+}
+
+func (c *ListMembers) addToTable(table *tablewriter.Table, members []*entries.Member) {
+	for _, member := range members {
 		enabled := msg.Green("Enabled").String()
 		if member.GetDisabled() {
 			enabled = msg.Red("Disabled").String()
@@ -48,8 +57,6 @@ func (c *ListMembers) Execute([]string) error {
 			enabled,
 		})
 	}
-	table.Render()
-	return nil
 }
 
 func init() {
