@@ -2,8 +2,6 @@ module github.com/orange-cloudfoundry/gsloc-cli
 
 go 1.20
 
-replace github.com/orange-cloudfoundry/gsloc-go-sdk v0.0.0 => ../gsloc-go-sdk
-
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/ArthurHlt/go-flags v1.6.0
@@ -15,7 +13,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.8
-	github.com/orange-cloudfoundry/gsloc-go-sdk v0.0.0
+	github.com/orange-cloudfoundry/gsloc-go-sdk v0.1.0
 	github.com/sourcegraph/conc v0.3.0
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
