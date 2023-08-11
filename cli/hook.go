@@ -1,7 +1,7 @@
 package cli
 
 import (
-	msg "github.com/ArthurHlt/messages"
+	"fmt"
 	"strings"
 )
 
@@ -12,7 +12,7 @@ type Hook struct {
 var hook Hook
 
 func (c *Hook) Execute(args []string) error {
-	msg.Print(c.makeCompletion(c.Completion))
+	fmt.Print(c.makeCompletion(c.Completion))
 	return nil
 }
 
