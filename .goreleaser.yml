@@ -1,10 +1,5 @@
 project_name: gsloc-cli
 
-gitlab_urls:
-  api: https://gitlab.si.francetelecom.fr/api/v4/
-  download: https://gitlab.si.francetelecom.fr
-  skip_tls_verify: false
-
 builds:
   - &template
     id: binary
