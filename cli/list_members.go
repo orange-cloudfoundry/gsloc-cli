@@ -62,12 +62,12 @@ func (c *ListMembers) addToTable(table *tablewriter.Table, members []*entries.Me
 func init() {
 	desc := "List members."
 	cmd, err := parser.AddCommand(
-		"list-members",
+		"members",
 		desc,
 		desc,
 		&listMembers)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"lm", "members"}
+	cmd.Aliases = []string{"ms"}
 }

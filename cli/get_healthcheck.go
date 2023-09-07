@@ -40,12 +40,12 @@ func (c *GetHealthcheck) Execute([]string) error {
 func init() {
 	desc := "Get healthcheck."
 	cmd, err := parser.AddCommand(
-		"get-healthcheck",
+		"healthcheck",
 		desc,
 		desc,
 		&getHealthcheck)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"gh", "ghc", "get-hc"}
+	cmd.Aliases = []string{"hc"}
 }

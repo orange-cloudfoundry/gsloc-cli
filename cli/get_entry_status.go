@@ -40,12 +40,12 @@ func (c *GetEntryStatus) Execute([]string) error {
 func init() {
 	desc := "Get entry with status."
 	cmd, err := parser.AddCommand(
-		"get-entry-status",
+		"entry-status",
 		desc,
 		desc,
 		&getEntryStatus)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"ges", "entry"}
+	cmd.Aliases = []string{"es"}
 }

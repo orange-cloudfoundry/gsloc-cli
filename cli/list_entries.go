@@ -86,12 +86,12 @@ func (c *ListEntries) makeDcContent(members []*entries.Member, dc string) string
 func init() {
 	desc := "List entries."
 	cmd, err := parser.AddCommand(
-		"list-entries",
+		"entries",
 		desc,
 		desc,
 		&listEntries)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"le", "get-entries"}
+	cmd.Aliases = []string{"ets"}
 }

@@ -40,12 +40,12 @@ func (c *GetEntry) Execute([]string) error {
 func init() {
 	desc := "Get entry."
 	cmd, err := parser.AddCommand(
-		"get-entry",
+		"entry",
 		desc,
 		desc,
 		&getEntry)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"ge"}
+	cmd.Aliases = []string{"e"}
 }

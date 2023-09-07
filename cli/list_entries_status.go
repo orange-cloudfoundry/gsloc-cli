@@ -114,12 +114,12 @@ func (c *ListEntriesStatus) makeDcContent(entMemberStatus []*gslbsvc.MemberStatu
 func init() {
 	desc := "List entries with status."
 	cmd, err := parser.AddCommand(
-		"list-entries-status",
+		"entries-status",
 		desc,
 		desc,
 		&listEntriesStatus)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"les", "list"}
+	cmd.Aliases = []string{"ess"}
 }

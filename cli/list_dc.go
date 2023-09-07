@@ -48,12 +48,12 @@ func (c *ListDcs) Execute([]string) error {
 func init() {
 	desc := "List datacenters."
 	cmd, err := parser.AddCommand(
-		"list-dcs",
+		"datacenters",
 		desc,
 		desc,
 		&listDcs)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"ld", "list-dc"}
+	cmd.Aliases = []string{"dcs"}
 }

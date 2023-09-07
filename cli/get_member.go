@@ -42,12 +42,12 @@ func (c *GetMember) Execute([]string) error {
 func init() {
 	desc := "Get member."
 	cmd, err := parser.AddCommand(
-		"get-member",
+		"member",
 		desc,
 		desc,
 		&getMember)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"gm"}
+	cmd.Aliases = []string{"m"}
 }
