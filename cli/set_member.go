@@ -10,11 +10,11 @@ import (
 )
 
 type SetMember struct {
-	FQDN     *FQDN  `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
-	Ip       string `short:"i" long:"ip" description:"IP of the member to add." required:"true"`
-	DC       string `short:"d" long:"dc" description:"Datacenter of the member to add." required:"true"`
-	Ratio    uint32 `short:"r" long:"ratio" description:"Ratio of the member to add."`
-	Disabled bool   `short:"D" long:"disabled" description:"Disable the member to add."`
+	FQDN     *FQDN   `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
+	Ip       string  `short:"i" long:"ip" description:"IP of the member to add." required:"true"`
+	DC       string  `short:"d" long:"dc" description:"Datacenter of the member to add." required:"true"`
+	Ratio    *uint32 `short:"r" long:"ratio" description:"Ratio of the member to add."`
+	Disabled *bool   `short:"D" long:"disabled" description:"Disable the member to add."`
 
 	Force bool `long:"force" description:"Force create entry without confirmation"`
 
@@ -31,10 +31,8 @@ func (c *SetMember) Execute([]string) error {
 	setMemberReq := &gslbsvc.SetMemberRequest{
 		Fqdn: c.FQDN.String(),
 		Member: &entries.Member{
-			Dc:       c.DC,
-			Ip:       c.Ip,
-			Ratio:    c.Ratio,
-			Disabled: c.Disabled,
+			Dc: c.DC,
+			Ip: c.Ip,
 		},
 	}
 	var previousEntry *gslbsvc.SetMemberRequest
@@ -52,6 +50,14 @@ func (c *SetMember) Execute([]string) error {
 		}
 		proto.Merge(setMemberReq, previousEntry)
 	}
+
+	if c.Ratio != nil {
+		setMemberReq.Member.Ratio = *c.Ratio
+	}
+	if c.Disabled != nil {
+		setMemberReq.Member.Disabled = *c.Disabled
+	}
+
 	confirm, err := DiffAndConfirm(previousEntry, setMemberReq, c.Force)
 	if err != nil {
 		return err

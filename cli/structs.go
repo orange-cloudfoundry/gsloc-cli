@@ -6,6 +6,7 @@ import (
 	"github.com/orange-cloudfoundry/gsloc-cli/app"
 	gslbsvc "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/services/gslb/v1"
 	"os"
+	"strings"
 )
 
 type MemberMap struct {
@@ -20,7 +21,7 @@ type FQDN struct {
 }
 
 func (n *FQDN) String() string {
-	return Fqdn(n.content)
+	return strings.ToLower(Fqdn(n.content))
 }
 
 func (n *FQDN) Complete(match string) []flags.Completion {

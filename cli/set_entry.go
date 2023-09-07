@@ -12,6 +12,7 @@ import (
 	gsloctype "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/type/v1"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/durationpb"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -30,11 +31,13 @@ type SetEntry struct {
 	TTL               uint32              `long:"ttl" description:"TTL" default:"30"`
 	Tags              []string            `short:"T" long:"tag" description:"Tag (can be set multiple time)"`
 
-	HcTimeout   string `short:"o" long:"hc-timeout" description:"Healthcheck timeout" default:"10s"`
-	HcInterval  string `short:"i" long:"hc-interval" description:"Healthcheck interval" default:"30s"`
-	HcPort      uint32 `short:"P" long:"hc-port" description:"Healthcheck port" default:"80"`
-	HcType      string `short:"t" long:"hc-type" description:"Healthcheck type" choice:"HTTP" choice:"TCP" choice:"GRPC" choice:"NO_HEALTHCHECK" default:"NO_HEALTHCHECK"`
-	HcEnableTls bool   `long:"hc-enable-tls" description:"Enable tls during healthcheck"`
+	HcTimeout       string         `short:"o" long:"hc-timeout" description:"Healthcheck timeout" default:"10s"`
+	HcInterval      string         `short:"i" long:"hc-interval" description:"Healthcheck interval" default:"30s"`
+	HcPort          uint32         `short:"P" long:"hc-port" description:"Healthcheck port" default:"80"`
+	HcType          string         `short:"t" long:"hc-type" description:"Healthcheck type" choice:"HTTP" choice:"TCP" choice:"GRPC" choice:"NO_HEALTHCHECK" default:"NO_HEALTHCHECK"`
+	HcEnableTls     bool           `long:"hc-enable-tls" description:"Enable tls during healthcheck"`
+	HcTlsServerName string         `long:"hc-tls-server-name" description:"Set TLS server name during healthcheck (default: fqdn without trailing dot)"`
+	HcTlsCa         flags.Filename `long:"hc-tls-ca" description:"Set TLS CA during healthcheck, this must be a file path"`
 
 	HttpHost            string            `short:"H" long:"http-host" description:"HTTP healthcheck host"`
 	HttpPath            string            `long:"http-path" description:"HTTP healthcheck path"`
@@ -52,6 +55,8 @@ type SetEntry struct {
 	GRPCServiceName string `long:"grpc-service-name" description:"gRPC healthcheck service name"`
 	GRPCAuthority   string `long:"grpc-authority" description:"gRPC healthcheck authority"`
 
+	Strategy string `long:"strategy" description:"Set strategy for push between OVERRIDE to override config or MERGE to merge config" choice:"OVERRIDE" choice:"MERGE" default:"OVERRIDE"`
+
 	Force bool `long:"force" description:"Force create entry without confirmation"`
 
 	client gslbsvc.GSLBClient
@@ -61,6 +66,10 @@ var setEntry SetEntry
 
 func (c *SetEntry) SetClient(client gslbsvc.GSLBClient) {
 	c.client = client
+}
+
+func (c *SetEntry) isMerge() bool {
+	return c.Strategy == "MERGE"
 }
 
 func (c *SetEntry) Execute([]string) error {
@@ -75,7 +84,6 @@ func (c *SetEntry) Execute([]string) error {
 		entryToSet.Healthcheck = &hcconf.HealthCheck{}
 	}
 	entryToSet.Entry.Fqdn = c.FQDN.String()
-	entryToSetOrig := proto.Clone(entryToSet).(*gslbsvc.SetEntryRequest)
 	var previousEntry *gslbsvc.SetEntryRequest
 	resp, err := c.client.GetEntry(context.Background(), &gslbsvc.GetEntryRequest{
 		Fqdn: entryToSet.GetEntry().GetFqdn(),
@@ -88,11 +96,11 @@ func (c *SetEntry) Execute([]string) error {
 			Entry:       resp.GetEntry(),
 			Healthcheck: resp.GetHealthcheck(),
 		}
-		proto.Merge(entryToSet, previousEntry)
+		if c.isMerge() {
+			proto.Merge(entryToSet, previousEntry)
+		}
 	}
 	if loaded {
-		// override after merge
-		entryToSet.Healthcheck.EnableTls = entryToSetOrig.Healthcheck.EnableTls
 		return c.apply(previousEntry, entryToSet)
 	}
 	newEntryToSet, err := c.makeEntry()
@@ -100,8 +108,6 @@ func (c *SetEntry) Execute([]string) error {
 		return err
 	}
 	proto.Merge(entryToSet, newEntryToSet)
-	// override after merge
-	entryToSet.Healthcheck.EnableTls = entryToSetOrig.Healthcheck.EnableTls
 	return c.apply(previousEntry, entryToSet)
 }
 
@@ -161,12 +167,24 @@ func (c *SetEntry) makeHealthcheck() (*hcconf.HealthCheck, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid interval: %s", err)
 	}
+
+	caContent := make([]byte, 0)
+	if c.HcTlsCa != "" {
+		caContent, err = os.ReadFile(string(c.HcTlsCa))
+		if err != nil {
+			return nil, fmt.Errorf("failed to read ca file: %s", err)
+		}
+	}
 	hc := &hcconf.HealthCheck{
 		Timeout:       durationpb.New(timeout),
 		Interval:      durationpb.New(interval),
 		Port:          c.HcPort,
 		HealthChecker: nil,
-		EnableTls:     c.HcEnableTls,
+		TlsConfig: &hcconf.TlsConfig{
+			Enable:     c.HcEnableTls,
+			Ca:         string(caContent),
+			ServerName: c.HcTlsServerName,
+		},
 	}
 	switch c.HcType {
 	case "HTTP":
