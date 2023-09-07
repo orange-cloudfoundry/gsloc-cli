@@ -68,6 +68,13 @@ func (c *SetEntry) Execute([]string) error {
 	if err != nil {
 		return err
 	}
+	if entryToSet.Entry == nil {
+		entryToSet.Entry = &entries.Entry{}
+	}
+	if entryToSet.Healthcheck == nil {
+		entryToSet.Healthcheck = &hcconf.HealthCheck{}
+	}
+	entryToSetOrig := proto.Clone(entryToSet).(*gslbsvc.SetEntryRequest)
 	entryToSet.Entry.Fqdn = c.FQDN.String()
 	var previousEntry *gslbsvc.SetEntryRequest
 	resp, err := c.client.GetEntry(context.Background(), &gslbsvc.GetEntryRequest{
@@ -84,12 +91,17 @@ func (c *SetEntry) Execute([]string) error {
 		proto.Merge(entryToSet, previousEntry)
 	}
 	if loaded {
+		// override after merge
+		entryToSet.Healthcheck.EnableTls = entryToSetOrig.Healthcheck.EnableTls
 		return c.apply(previousEntry, entryToSet)
 	}
-	entryToSet, err = c.makeEntry()
+	newEntryToSet, err := c.makeEntry()
 	if err != nil {
 		return err
 	}
+	proto.Merge(entryToSet, newEntryToSet)
+	// override after merge
+	entryToSet.Healthcheck.EnableTls = entryToSetOrig.Healthcheck.EnableTls
 	return c.apply(previousEntry, entryToSet)
 }
 

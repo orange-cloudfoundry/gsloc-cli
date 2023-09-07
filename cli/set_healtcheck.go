@@ -74,6 +74,8 @@ func (c *SetHealthcheck) Execute([]string) error {
 		}
 		proto.Merge(setHcReq, previousEntry)
 	}
+	// override after merge
+	setHcReq.Healthcheck.EnableTls = c.HcEnableTls
 	confirm, err := DiffAndConfirm(previousEntry, setHcReq, c.Force)
 	if err != nil {
 		return err
@@ -183,12 +185,12 @@ func (c *SetHealthcheck) makeHealthcheck() (*hcconf.HealthCheck, error) {
 func init() {
 	desc := "Create or update an entry."
 	cmd, err := parser.AddCommand(
-		"set-entry",
+		"set-healthcheck",
 		desc,
 		desc,
 		&setHealthcheck)
 	if err != nil {
 		panic(err)
 	}
-	cmd.Aliases = []string{"se"}
+	cmd.Aliases = []string{"shc"}
 }

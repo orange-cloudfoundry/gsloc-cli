@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	msg "github.com/ArthurHlt/messages"
+	"github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/api/config/entries/v1"
 	gslbsvc "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/services/gslb/v1"
 	"google.golang.org/protobuf/proto"
 	"strings"
@@ -29,6 +30,12 @@ var setMember SetMember
 func (c *SetMember) Execute([]string) error {
 	setMemberReq := &gslbsvc.SetMemberRequest{
 		Fqdn: c.FQDN.String(),
+		Member: &entries.Member{
+			Dc:       c.DC,
+			Ip:       c.Ip,
+			Ratio:    c.Ratio,
+			Disabled: c.Disabled,
+		},
 	}
 	var previousEntry *gslbsvc.SetMemberRequest
 	resp, err := c.client.GetMember(context.Background(), &gslbsvc.GetMemberRequest{

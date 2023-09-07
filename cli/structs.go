@@ -20,7 +20,7 @@ type FQDN struct {
 }
 
 func (n *FQDN) String() string {
-	return n.content
+	return Fqdn(n.content)
 }
 
 func (n *FQDN) Complete(match string) []flags.Completion {
