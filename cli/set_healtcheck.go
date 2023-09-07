@@ -43,7 +43,7 @@ type SetHealthcheck struct {
 	GRPCServiceName string `long:"grpc-service-name" description:"gRPC healthcheck service name"`
 	GRPCAuthority   string `long:"grpc-authority" description:"gRPC healthcheck authority"`
 
-	Strategy string `long:"strategy" description:"Set strategy for push between OVERRIDE to override config or MERGE to merge config" choice:"OVERRIDE" choice:"MERGE" default:"OVERRIDE"`
+	Strategy string `short:"g" long:"strategy" description:"Set strategy for push between OVERRIDE to override config or MERGE to merge config" choice:"OVERRIDE" choice:"MERGE" default:"OVERRIDE"`
 
 	Force bool `long:"force" description:"Force create entry without confirmation"`
 
