@@ -74,8 +74,8 @@ func (c *SetEntry) Execute([]string) error {
 	if entryToSet.Healthcheck == nil {
 		entryToSet.Healthcheck = &hcconf.HealthCheck{}
 	}
-	entryToSetOrig := proto.Clone(entryToSet).(*gslbsvc.SetEntryRequest)
 	entryToSet.Entry.Fqdn = c.FQDN.String()
+	entryToSetOrig := proto.Clone(entryToSet).(*gslbsvc.SetEntryRequest)
 	var previousEntry *gslbsvc.SetEntryRequest
 	resp, err := c.client.GetEntry(context.Background(), &gslbsvc.GetEntryRequest{
 		Fqdn: entryToSet.GetEntry().GetFqdn(),
