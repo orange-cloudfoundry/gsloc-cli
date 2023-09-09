@@ -5,7 +5,6 @@ import (
 	"fmt"
 	msg "github.com/ArthurHlt/messages"
 	gslbsvc "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/services/gslb/v1"
-	"github.com/sourcegraph/conc/pool"
 	"strings"
 )
 
@@ -25,43 +24,19 @@ func (c *ListEntriesStatus) SetClient(client gslbsvc.GSLBClient) {
 var listEntriesStatus ListEntriesStatus
 
 func (c *ListEntriesStatus) Execute([]string) error {
-	entsResp, err := c.client.ListEntries(context.Background(), &gslbsvc.ListEntriesRequest{
+	entsResp, err := c.client.ListEntriesStatus(context.Background(), &gslbsvc.ListEntriesStatusRequest{
 		Tags:   c.Tags,
 		Prefix: c.Prefix,
 	})
 	if err != nil {
 		return err
 	}
-	var entsStatus []*gslbsvc.GetEntryStatusResponse
-	var chanEntsStatus = make(chan *gslbsvc.GetEntryStatusResponse, 100)
-	p := pool.New().WithMaxGoroutines(10)
-	done := make(chan struct{})
-	go func() {
-		for entStatus := range chanEntsStatus {
-			entsStatus = append(entsStatus, entStatus)
-		}
-		done <- struct{}{}
-	}()
-	for _, ent := range entsResp.GetEntries() {
-		ent := ent
-		p.Go(func() {
-			entStatus, err := c.client.GetEntryStatus(context.Background(), &gslbsvc.GetEntryStatusRequest{
-				Fqdn: ent.GetEntry().GetFqdn(),
-			})
-			if err != nil {
-				msg.Fatal(err.Error())
-			}
-			chanEntsStatus <- entStatus
-		})
-	}
-	p.Wait()
-	close(chanEntsStatus)
-	<-done
+
 	if c.Json {
-		return PrintProtoListJson[*gslbsvc.GetEntryStatusResponse](entsStatus)
+		return PrintProtoListJson[*gslbsvc.GetEntryStatusResponse](entsResp.GetEntriesStatus())
 	}
 
-	if len(entsStatus) == 0 {
+	if len(entsResp.GetEntriesStatus()) == 0 {
 		msg.Info("No entries found.")
 		return nil
 	}
@@ -73,7 +48,7 @@ func (c *ListEntriesStatus) Execute([]string) error {
 
 	table := MakeTableWriter(append([]string{"FQDN"}, dcResp.GetDcs()...))
 	table.SetAutoWrapText(false)
-	for _, entStatus := range entsStatus {
+	for _, entStatus := range entsResp.GetEntriesStatus() {
 		line := []string{entStatus.GetFqdn()}
 		for _, dc := range dcResp.GetDcs() {
 			dcContent := c.makeDcContent(entStatus.GetMembersIpv4(), dc)

@@ -21,15 +21,13 @@ import (
 type SetEntry struct {
 	File flags.Filename `short:"f" long:"file" description:"Path to a json or yml file definition of entry" required:"true" default:"entry.yml"`
 
-	FQDN              *FQDN               `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
-	LBAlgoPreferred   string              `short:"p" long:"lb-algo-preferred" description:"LB algo preferred" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
-	LBAlgoAlternate   string              `short:"a" long:"lb-algo-alternate" description:"LB algo alternate" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
-	LBAlgoFallback    string              `short:"b" long:"lb-algo-fallback" description:"LB algo fallback" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
-	MaxAnswerReturned uint32              `short:"m" long:"max-answer-returned" description:"Max answer returned" default:"0"`
-	MembersIPv4       []map[string]string `short:"4" long:"members-ipv4" description:"Members ipv4 (can be set multiple time)"`
-	MembersIPv6       []map[string]string `short:"6" long:"members-ipv6" description:"Members ipv6 (can be set multiple time)"`
-	TTL               uint32              `long:"ttl" description:"TTL" default:"30"`
-	Tags              []string            `short:"T" long:"tag" description:"Tag (can be set multiple time)"`
+	FQDN              *FQDN    `positional-args:"true" positional-arg-name:"'fqdn'" required:"true"`
+	LBAlgoPreferred   string   `short:"p" long:"lb-algo-preferred" description:"LB algo preferred" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
+	LBAlgoAlternate   string   `short:"a" long:"lb-algo-alternate" description:"LB algo alternate" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
+	LBAlgoFallback    string   `short:"b" long:"lb-algo-fallback" description:"LB algo fallback" choice:"ROUND_ROBIN" choice:"TOPOLOGY" choice:"RATIO" choice:"RANDOM" default:"ROUND_ROBIN"`
+	MaxAnswerReturned uint32   `short:"m" long:"max-answer-returned" description:"Max answer returned" default:"0"`
+	TTL               uint32   `long:"ttl" description:"TTL" default:"30"`
+	Tags              []string `short:"T" long:"tag" description:"Tag (can be set multiple time)"`
 
 	HcTimeout       string         `short:"o" long:"hc-timeout" description:"Healthcheck timeout" default:"10s"`
 	HcInterval      string         `short:"i" long:"hc-interval" description:"Healthcheck interval" default:"30s"`
@@ -96,8 +94,12 @@ func (c *SetEntry) Execute([]string) error {
 			Entry:       resp.GetEntry(),
 			Healthcheck: resp.GetHealthcheck(),
 		}
-		if c.isMerge() {
+		if c.isMerge() && !loaded {
 			proto.Merge(entryToSet, previousEntry)
+		}
+		if !loaded {
+			entryToSet.GetEntry().MembersIpv4 = previousEntry.GetEntry().GetMembersIpv4()
+			entryToSet.GetEntry().MembersIpv6 = previousEntry.GetEntry().GetMembersIpv6()
 		}
 	}
 	if loaded {
@@ -128,14 +130,6 @@ func (c *SetEntry) apply(previousEntry, currentEntry *gslbsvc.SetEntryRequest) e
 }
 
 func (c *SetEntry) makeEntry() (*gslbsvc.SetEntryRequest, error) {
-	membersIpv4, err := ListMapToMembers(c.MembersIPv4)
-	if err != nil {
-		return nil, fmt.Errorf("invalid members ipv4: %s", err)
-	}
-	membersIpv6, err := ListMapToMembers(c.MembersIPv6)
-	if err != nil {
-		return nil, fmt.Errorf("invalid members ipv6: %s", err)
-	}
 	hc, err := c.makeHealthcheck()
 	if err != nil {
 		return nil, err
@@ -147,8 +141,6 @@ func (c *SetEntry) makeEntry() (*gslbsvc.SetEntryRequest, error) {
 			LbAlgoAlternate:   entries.LBAlgo(entries.LBAlgo_value[c.LBAlgoAlternate]),
 			LbAlgoFallback:    entries.LBAlgo(entries.LBAlgo_value[c.LBAlgoFallback]),
 			MaxAnswerReturned: c.MaxAnswerReturned,
-			MembersIpv4:       membersIpv4,
-			MembersIpv6:       membersIpv6,
 			Ttl:               c.TTL,
 			Permissions:       nil,
 			Tags:              c.Tags,

@@ -13,7 +13,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/ginkgo/v2 v2.12.0
 	github.com/onsi/gomega v1.27.10
-	github.com/orange-cloudfoundry/gsloc-go-sdk v0.3.0
+	github.com/orange-cloudfoundry/gsloc-go-sdk v0.4.0
 	github.com/sourcegraph/conc v0.3.0
 	google.golang.org/grpc v1.58.0
 	google.golang.org/protobuf v1.31.0

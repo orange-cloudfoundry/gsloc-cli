@@ -8,10 +8,8 @@ import (
 	msg "github.com/ArthurHlt/messages"
 	"github.com/gonvenience/ytbx"
 	"github.com/homeport/dyff/pkg/dyff"
-	"github.com/mitchellh/mapstructure"
 	"github.com/olekukonko/tablewriter"
 	"github.com/orange-cloudfoundry/gsloc-cli/highlight"
-	"github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/api/config/entries/v1"
 	hcconf "github.com/orange-cloudfoundry/gsloc-go-sdk/gsloc/api/config/healthchecks/v1"
 	"github.com/orange-cloudfoundry/gsloc-go-sdk/helpers"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -37,40 +35,6 @@ var emptyJsonRegex = regexp.MustCompile(`\{\s*\}`)
 //	helpers.TypeUrl[*vs.VirtualServer]():             "vs",
 //	helpers.TypeUrl[*cluster.ClusterEndpointStats](): "endpoints",
 //}
-
-func ListMapToMembers(lm []map[string]string) ([]*entries.Member, error) {
-	var members []*entries.Member
-	for _, m := range lm {
-		member, err := MapToMember(m)
-		if err != nil {
-			if member.Ip != "" {
-				return nil, fmt.Errorf("failed to parse member %s: %w", member.Ip, err)
-			}
-			return nil, err
-		}
-		members = append(members, member)
-	}
-	return members, nil
-}
-
-func MapToMember(m map[string]string) (*entries.Member, error) {
-	var mm MemberMap
-	err := mapstructure.WeakDecode(m, &mm)
-	if err != nil {
-		return nil, err
-	}
-	member := &entries.Member{
-		Ip:       mm.Ip,
-		Ratio:    uint32(mm.Ratio),
-		Dc:       mm.DC,
-		Disabled: mm.Disabled,
-	}
-	err = member.Validate()
-	if err != nil {
-		return member, err
-	}
-	return member, nil
-}
 
 func FileToProto[T proto.Message](file string) (protoMsg T, loaded bool, err error) {
 	var protoMsgDef T

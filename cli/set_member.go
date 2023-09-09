@@ -56,6 +56,8 @@ func (c *SetMember) Execute([]string) error {
 	}
 	if c.Disabled != nil {
 		setMemberReq.Member.Disabled = *c.Disabled
+	} else {
+		setMemberReq.Member.Disabled = false
 	}
 
 	confirm, err := DiffAndConfirm(previousEntry, setMemberReq, c.Force)
