@@ -39,8 +39,8 @@ func Start(version, commit, date string) (err error) {
 	}()
 
 	parser.CommandHandler = func(command flags.Commander, args []string) error {
+		msg.UseStdout()
 		if cmd, ok := command.(SetClient); ok {
-
 			clientConn, err = app.CreateConnFromFile(ExpandConfigPath())
 			if err != nil {
 				return err
@@ -52,6 +52,7 @@ func Start(version, commit, date string) (err error) {
 	}
 	_, err = parser.Parse()
 	if err != nil {
+		msg.UseStderr()
 		errFlag, isErrFlag := err.(*flags.Error)
 		if isErrFlag && askVersion && errFlag.Type == flags.ErrCommandRequired {
 			return nil
