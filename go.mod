@@ -7,10 +7,10 @@ require (
 	github.com/ArthurHlt/go-flags v1.6.0
 	github.com/ArthurHlt/messages v1.0.0
 	github.com/gonvenience/ytbx v1.4.4
-	github.com/homeport/dyff v1.5.8
+	github.com/homeport/dyff v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/onsi/ginkgo/v2 v2.12.1
+	github.com/onsi/ginkgo/v2 v2.13.0
 	github.com/onsi/gomega v1.28.0
 	github.com/orange-cloudfoundry/gsloc-go-sdk v0.6.0
 	google.golang.org/grpc v1.59.0
