@@ -91,15 +91,26 @@ func ProtoToYaml(pMsg proto.Message) ([]byte, error) {
 	return yaml.Marshal(mapProto)
 }
 
-func MakePayloadFromString(txt string) *hcconf.HealthCheckPayload {
+func MakePayloadFromString(txt string) (*hcconf.HealthCheckPayload, error) {
 	if txt == "" {
-		return nil
+		return nil, nil
+	}
+	if txt[0] == '@' {
+		b, err := os.ReadFile(txt[1:])
+		if err != nil {
+			return nil, err
+		}
+		return &hcconf.HealthCheckPayload{
+			Payload: &hcconf.HealthCheckPayload_Binary{
+				Binary: b,
+			},
+		}, nil
 	}
 	return &hcconf.HealthCheckPayload{
 		Payload: &hcconf.HealthCheckPayload_Text{
 			Text: txt,
 		},
-	}
+	}, nil
 }
 
 func NameFromAny(anyMsg *anypb.Any) string {

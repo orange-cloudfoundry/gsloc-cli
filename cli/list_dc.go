@@ -9,9 +9,6 @@ import (
 type ListDcs struct {
 	Json bool `short:"j" long:"json" description:"Format in json instead of human table readable."`
 
-	Tags   []string `short:"t" long:"tag" description:"Filter by tag(s) (can be set multiple times)."`
-	Prefix string   `short:"p" long:"prefix" description:"Filter by prefix."`
-
 	client gslbsvc.GSLBClient
 }
 
