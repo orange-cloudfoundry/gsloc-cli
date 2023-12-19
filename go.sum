@@ -94,8 +94,8 @@ github.com/onsi/ginkgo/v2 v2.13.2 h1:Bi2gGVkfn6gQcjNjZJVO8Gf0FHzMPf2phUei9tejVMs
 github.com/onsi/ginkgo/v2 v2.13.2/go.mod h1:XStQ8QcGwLyF4HdfcZB8SFOS/MWCgDuXMSBe6zrvLgM=
 github.com/onsi/gomega v1.30.0 h1:hvMK7xYz4D3HapigLTeGdId/NcfQx1VHMJc60ew99+8=
 github.com/onsi/gomega v1.30.0/go.mod h1:9sxs+SwGrKI0+PWe4Fxa9tFQQBG5xSsSbMXOI8PPpoQ=
-github.com/orange-cloudfoundry/gsloc-go-sdk v0.7.0 h1:3Q5foXS5SRjtD/BbhTqXA8241TG7cgN7wrovNAHcXJo=
-github.com/orange-cloudfoundry/gsloc-go-sdk v0.7.0/go.mod h1:/exDL3L15iRsthXTeCrRvmupi3QTPq6oU7mi45x8DoY=
+github.com/orange-cloudfoundry/gsloc-go-sdk v0.7.1 h1:utAh4PpUrQWV75LuOcx3vHOZkCeXL3lnUHXD1Z6E0tg=
+github.com/orange-cloudfoundry/gsloc-go-sdk v0.7.1/go.mod h1:/AGaE9vdQHgkWnJC5Z5i3lCyYZPvIA5lRgX5/nIl1sw=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
