@@ -16,8 +16,8 @@ github.com/creack/pty v1.1.17/go.mod h1:MOBLtS5ELjhRRrroQr9kyvTxUAFNvYEK993ew/Vr
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/envoyproxy/protoc-gen-validate v1.0.2 h1:QkIBuU5k+x7/QXPvPPnWXWlCdaBFApVqftFV6k087DA=
-github.com/envoyproxy/protoc-gen-validate v1.0.2/go.mod h1:GpiZQP3dDbg4JouG/NNS7QWXpgx6x8QiMKdmN72jogE=
+github.com/envoyproxy/protoc-gen-validate v1.0.3 h1:OX87DHS8tIhwqAhG98nhCpbrwRgwCnPrioTplpLM+tI=
+github.com/envoyproxy/protoc-gen-validate v1.0.3/go.mod h1:xy7qMYf3g7acibqTmaLZJOxRlysYxrJ2QMkT/mbZooU=
 github.com/fatih/color v1.13.0 h1:8LOYc1KYPPmyKMuN8QV2DNRWNbLo6LZ0iLs8+mlH53w=
 github.com/fatih/color v1.13.0/go.mod h1:kLAiJbzzSOZDVNGyDpeOxJ47H46qBXwg5ILebYFFOfk=
 github.com/fsnotify/fsnotify v1.6.0 h1:n+5WquG0fcWoWp6xPWfHdbskMCQaFnG6PfBrh1Ky4HY=
@@ -94,8 +94,8 @@ github.com/onsi/ginkgo/v2 v2.14.0 h1:vSmGj2Z5YPb9JwCWT6z6ihcUvDhuXLc3sJiqd3jMKAY
 github.com/onsi/ginkgo/v2 v2.14.0/go.mod h1:JkUdW7JkN0V6rFvsHcJ478egV3XH9NxpD27Hal/PhZw=
 github.com/onsi/gomega v1.30.0 h1:hvMK7xYz4D3HapigLTeGdId/NcfQx1VHMJc60ew99+8=
 github.com/onsi/gomega v1.30.0/go.mod h1:9sxs+SwGrKI0+PWe4Fxa9tFQQBG5xSsSbMXOI8PPpoQ=
-github.com/orange-cloudfoundry/gsloc-go-sdk v0.8.0 h1:J8YQHhk2ddlRShc3UOHFobDPr+tcr+xkfqx66gWbwew=
-github.com/orange-cloudfoundry/gsloc-go-sdk v0.8.0/go.mod h1:+dZG3MpzLxR3QcXC1gJmvYwPXRQaUjgjCSCX9HCVAoI=
+github.com/orange-cloudfoundry/gsloc-go-sdk v0.8.1 h1:c8I+uAct3ne3RLEvKRtZrMPQcV3l38z7OkV+tDaQqGI=
+github.com/orange-cloudfoundry/gsloc-go-sdk v0.8.1/go.mod h1:zLey8kqiyPkotrZU7NJ43kBIPmHDly5bl4j9mPWdlWY=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
