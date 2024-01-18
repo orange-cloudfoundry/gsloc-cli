@@ -10,7 +10,7 @@ require (
 	github.com/homeport/dyff v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/onsi/ginkgo/v2 v2.14.0
+	github.com/onsi/ginkgo/v2 v2.15.0
 	github.com/onsi/gomega v1.30.0
 	github.com/orange-cloudfoundry/gsloc-go-sdk v0.8.1
 	google.golang.org/grpc v1.60.1
