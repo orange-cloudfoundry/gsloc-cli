@@ -11,7 +11,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/ginkgo/v2 v2.15.0
-	github.com/onsi/gomega v1.30.0
+	github.com/onsi/gomega v1.31.0
 	github.com/orange-cloudfoundry/gsloc-go-sdk v0.8.2
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.32.0
