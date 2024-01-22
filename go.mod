@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/ArthurHlt/go-flags v1.6.0
-	github.com/ArthurHlt/messages v1.0.0
+	github.com/ArthurHlt/messages v1.1.0
 	github.com/gonvenience/ytbx v1.4.4
 	github.com/homeport/dyff v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -34,6 +34,7 @@ require (
 	github.com/gonvenience/wrap v1.1.2 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/pprof v0.0.0-20230602150820-91b7bce49751 // indirect
+	github.com/jwalton/go-supportscolor v1.2.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/logrusorgru/aurora/v4 v4.0.0 // indirect
