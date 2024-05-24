@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/ArthurHlt/go-flags v1.6.0
-	github.com/ArthurHlt/messages v1.1.0
+	github.com/ArthurHlt/messages v1.1.1
 	github.com/gonvenience/ytbx v1.4.4
 	github.com/homeport/dyff v1.7.1
 	github.com/mitchellh/go-homedir v1.1.0
