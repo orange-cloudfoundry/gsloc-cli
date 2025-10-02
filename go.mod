@@ -1,6 +1,6 @@
 module github.com/orange-cloudfoundry/gsloc-cli
 
-go 1.20
+go 1.23
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
@@ -14,7 +14,7 @@ require (
 	github.com/onsi/gomega v1.31.1
 	github.com/orange-cloudfoundry/gsloc-go-sdk v0.9.1
 	google.golang.org/grpc v1.61.1
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.36.10
 	gopkg.in/yaml.v2 v2.4.0
 	sigs.k8s.io/yaml v1.4.0
 )
@@ -32,7 +32,7 @@ require (
 	github.com/gonvenience/term v1.0.2 // indirect
 	github.com/gonvenience/text v1.0.7 // indirect
 	github.com/gonvenience/wrap v1.2.0 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/pprof v0.0.0-20230602150820-91b7bce49751 // indirect
 	github.com/jwalton/go-supportscolor v1.2.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
